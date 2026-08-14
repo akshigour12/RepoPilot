@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RepoPilot Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-4">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark rounded shadow mb-4">
+
+        <div class="container-fluid">
+
+            <span class="navbar-brand">
+                🚀 RepoPilot
+            </span>
+
+            <span class="text-white">
+                GitHub Bulk Repository Manager
+            </span>
+
+        </div>
+
+    </nav>
+
+    <h3 class="mb-3">
+
+        Repositories ({{ repositories|length }})
+
+    </h3>
+
+    <!-- Search -->
+    <input
+        type="text"
+        id="searchInput"
+        class="form-control mb-3"
+        placeholder="Search repositories...">
+
+    <form action="/selected" method="POST">
+
+        <!-- Select All -->
+        <div class="form-check mb-3">
+
+            <input
+                class="form-check-input"
+                type="checkbox"
+                id="selectAll">
+
+            <label class="form-check-label" for="selectAll">
+
+                Select All
+
+            </label>
+
+        </div>
+
+        <!-- Repository Table -->
+        <table
+            id="repoTable"
+            class="table table-hover table-bordered shadow-sm">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th width="70">Select</th>
+                    <th>Repository</th>
+                    <th>Visibility</th>
+                    <th>Language</th>
+                    <th>Updated</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for repo in repositories %}
+
+                <tr>
+
+                    <td class="text-center">
+
+                        <input
+                            class="repo-checkbox"
+                            type="checkbox"
+                            name="repositories"
+                            value="{{ repo.name }}">
+
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="/repository/{{ repo.name }}"
+                            class="text-decoration-none">
+
+                            {{ repo.name }}
+
+                        </a>
+
+                    </td>
+
+                    <td>
+
+                        {% if repo.private %}
+
+                            <span class="badge bg-danger">
+
+                                Private
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-success">
+
+                                Public
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {{ repo.language or "-" }}
+
+                    </td>
+
+                    <td>
+
+                        {{ repo.updated_at[:10] }}
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        <!-- Bulk Action -->
+        <div class="row mt-4">
+
+            <div class="col-md-6">
+
+                <select
+                    class="form-select"
+                    id="actionSelect"
+                    name="action"
+                    required>
+
+                    <option value="">
+
+                        Select Bulk Action
+
+                    </option>
+
+                    <option value="public">
+
+                        Make Public
+
+                    </option>
+
+                    <option value="private">
+
+                        Make Private
+
+                    </option>
+
+                    <option value="archive">
+
+                        Archive
+
+                    </option>
+
+                    <option value="unarchive">
+
+                        Unarchive
+
+                    </option>
+
+                    <option value="rename">
+
+                        Rename
+
+                    </option>
+
+                    <option value="topics">
+
+                        Add Topics
+
+                    </option>
+
+                    <option value="readme">
+
+                        Create README
+
+                    </option>
+
+                    <option value="license">
+
+                        Add LICENSE
+
+                    </option>
+
+                    <option value="delete">
+
+                        Delete Repository
+
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <button
+                    type="submit"
+                    class="btn btn-success w-100">
+
+                    Continue →
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Rename Prefix -->
+        <div
+            id="renamePrefixDiv"
+            class="mt-4 d-none">
+
+            <label class="form-label">
+
+                Rename Prefix
+
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                name="rename_prefix"
+                placeholder="Example: archived-">
+
+        </div>
+
+        <!-- Rename Suffix -->
+        <div
+            id="renameSuffixDiv"
+            class="mt-3 d-none">
+
+            <label class="form-label">
+
+                Rename Suffix
+
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                name="rename_suffix"
+                placeholder="Example: -2026">
+
+        </div>
+
+        <!-- Topics -->
+        <div
+            id="topicsDiv"
+            class="mt-3 d-none">
+
+            <label class="form-label">
+
+                Topics (comma separated)
+
+            </label>
+
+            <input
+                type="text"
+                class="form-control"
+                name="topics"
+                placeholder="python, flask, automation">
+
+        </div>
+
+        <!-- Delete Warning -->
+        <div
+            id="deleteWarning"
+            class="alert alert-danger mt-3 d-none">
+
+            <strong>Warning!</strong>
+
+            This operation permanently deletes the selected repositories.
+
+        </div>
+
+    </form>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
